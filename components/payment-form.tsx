@@ -1,103 +1,72 @@
-'use client'
-
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
-import { Lock, ChevronLeft } from 'lucide-react'
-
-const paymentSchema = z.object({
-  firstName: z.string().min(2, 'First name required'),
-  lastName: z.string().min(2, 'Last name required'),
-  email: z.string().email('Invalid email'),
-  phone: z.string().min(10, 'Invalid phone number'),
-})
-
-type PaymentFormData = z.infer<typeof paymentSchema>
+import { ChevronLeft, Loader2, CheckCircle, AlertCircle } from 'lucide-react'
 
 export function PaymentForm({ amount }: { amount: number }) {
   const router = useRouter()
-  const [submitted, setSubmitted] = useState(false)
+  const [phoneNumber, setPhoneNumber] = useState('')
+  const [firstName, setFirstName] = useState('')
+  const [lastName, setLastName] = useState('')
+  const [email, setEmail] = useState('')
   const [isProcessing, setIsProcessing] = useState(false)
-  const { register, handleSubmit, formState: { errors } } = useForm<PaymentFormData>({
-    resolver: zodResolver(paymentSchema),
-  })
+  const [status, setStatus] = useState<'idle' | 'processing' | 'success' | 'error'>('idle')
+  const [errorMessage, setErrorMessage] = useState('')
+  const [transactionId, setTransactionId] = useState('')
 
-  const processingFee = Math.ceil(amount * 0.005) // 0.5% processing fee
+  const processingFee = Math.ceil(amount * 0.005)
+  const totalAmount = amount + processingFee
 
-  const onSubmit = async (data: PaymentFormData) => {
+  const initiateSTKPush = async (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    if (!phoneNumber || !firstName || !lastName || !email) {
+      setErrorMessage('Please fill in all fields')
+      return
+    }
+
+    if (phoneNumber.length < 10) {
+      setErrorMessage('Invalid phone number')
+      return
+    }
+
+    setIsProcessing(true)
+    setStatus('processing')
+    setErrorMessage('')
+
     try {
-      setIsProcessing(true)
-      console.log('[v0] Payment submitted:', { ...data, amount, processingFee })
+      const response = await fetch('/api/payment/initiate-stk', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          phoneNumber,
+          amount: totalAmount,
+          firstName,
+          lastName,
+          email,
+        }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to initiate payment')
+      }
+
+      setTransactionId(data.transactionId)
+      setStatus('success')
       
-      // Simulate payment processing
-      await new Promise(resolve => setTimeout(resolve, 2000))
-      
-      setSubmitted(true)
+      // Redirect to success page after 3 seconds
       setTimeout(() => {
         router.push('/payment-success')
-      }, 2000)
+      }, 3000)
     } catch (error) {
       console.error('[v0] Payment error:', error)
+      setErrorMessage(error instanceof Error ? error.message : 'Payment initiation failed')
+      setStatus('error')
       setIsProcessing(false)
     }
-  }
-
-  if (submitted) {
-    return (
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="w-full max-w-4xl"
-      >
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Left Side */}
-          <motion.div
-            initial={{ x: -20, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{ delay: 0.1 }}
-            className="flex flex-col justify-center items-center md:items-start text-center md:text-left bg-white dark:bg-card rounded-3xl p-8 md:p-12"
-          >
-            <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center mb-6">
-              <div className="w-6 h-6 bg-gradient-to-br from-blue-400 to-blue-600 rounded" />
-            </div>
-            <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-2">
-              KSh {amount.toLocaleString()}
-            </h1>
-            <p className="text-primary font-semibold mb-6">BY LOANS</p>
-            <p className="text-foreground/70 text-lg">
-              Processing your payment...
-            </p>
-          </motion.div>
-
-          {/* Right Side - Success Message */}
-          <motion.div
-            initial={{ x: 20, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{ delay: 0.2 }}
-            className="flex flex-col justify-center items-center bg-white dark:bg-card rounded-3xl p-8 md:p-12"
-          >
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.4, type: 'spring' }}
-              className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mb-6"
-            >
-              <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-            </motion.div>
-            <h2 className="text-2xl font-bold text-foreground mb-4">Processing Payment</h2>
-            <p className="text-foreground/70 text-center">
-              Your payment is being processed. Please wait...
-            </p>
-          </motion.div>
-        </div>
-      </motion.div>
-    )
   }
 
   return (
@@ -105,155 +74,205 @@ export function PaymentForm({ amount }: { amount: number }) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
-      className="w-full max-w-4xl"
+      className="w-full max-w-6xl mx-auto"
     >
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-0 rounded-3xl overflow-hidden shadow-2xl">
-        {/* Left Side - Info */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+        {/* Left Side - Amount Info */}
         <motion.div
-          initial={{ x: -20, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          transition={{ delay: 0.1 }}
-          className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-background/50 dark:to-background p-8 md:p-12 flex flex-col justify-between"
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+          className="flex flex-col justify-between"
         >
-          <Link href="/select-amount" className="inline-flex items-center text-primary hover:opacity-70 transition mb-8 font-semibold self-start">
-            <ChevronLeft className="w-5 h-5" />
-            Back
-          </Link>
-
           <div>
-            <div className="w-12 h-12 bg-white dark:bg-card rounded-lg flex items-center justify-center mb-8">
-              <div className="w-6 h-6 bg-gradient-to-br from-blue-400 to-blue-600 rounded" />
-            </div>
-            <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-2">
+            <Link href="/select-amount" className="inline-flex items-center text-primary hover:opacity-70 transition mb-8 font-semibold">
+              <ChevronLeft className="w-5 h-5" />
+              Back
+            </Link>
+            
+            <h1 className="text-5xl md:text-6xl font-bold text-primary mb-4">
               KSh {amount.toLocaleString()}
             </h1>
-            <p className="text-primary font-semibold mb-6">BY LOANS</p>
-            <p className="text-foreground/70 text-lg leading-relaxed">
+            <p className="text-2xl font-semibold text-foreground/70 mb-8">
+              BY LOANS
+            </p>
+            
+            <p className="text-lg text-foreground/80 mb-8 leading-relaxed">
               Pay for processing fee and receive your loan instantly
             </p>
+
+            {/* Payment Details */}
+            <div className="bg-primary/10 dark:bg-primary/20 rounded-2xl p-6 mb-8">
+              <div className="space-y-4">
+                <div className="flex justify-between">
+                  <span className="text-foreground/70">Loan Amount:</span>
+                  <span className="font-semibold">KSh {amount.toLocaleString()}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-foreground/70">Processing Fee:</span>
+                  <span className="font-semibold">KSh {processingFee.toLocaleString()}</span>
+                </div>
+                <div className="h-px bg-border/30"></div>
+                <div className="flex justify-between">
+                  <span className="font-semibold">Total Amount:</span>
+                  <span className="font-bold text-primary text-lg">KSh {totalAmount.toLocaleString()}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Payment Methods */}
+            <div className="flex items-center gap-4">
+              <span className="text-sm text-foreground/60">Payment Methods:</span>
+              <div className="flex gap-3">
+                <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white text-xs font-bold">M</div>
+                <svg className="w-8 h-8" viewBox="0 0 24 24" fill="currentColor" className="text-blue-600">
+                  <rect x="2" y="4" width="20" height="16" rx="2" fill="none" stroke="currentColor" strokeWidth="2"/>
+                </svg>
+              </div>
+            </div>
           </div>
 
-          <div className="bg-white/50 dark:bg-background/50 rounded-2xl p-6 border border-white/20 dark:border-border">
-            <p className="text-sm text-foreground/60 mb-4 font-semibold">Secured by</p>
-            <div className="flex items-center gap-3 flex-wrap">
-              <div className="text-2xl font-bold text-primary">M-PESA</div>
-              <svg className="w-6 h-6" viewBox="0 0 24 24" fill="#1434CB"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/></svg>
-              <svg className="w-6 h-6" viewBox="0 0 24 24" fill="#EB001B"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/></svg>
-              <svg className="w-6 h-6" viewBox="0 0 24 24" fill="#FF5F00"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/></svg>
-              <Lock className="w-5 h-5 text-foreground/40" />
-            </div>
+          <div className="text-sm text-foreground/60">
+            <p>Secured by PayHero</p>
           </div>
         </motion.div>
 
         {/* Right Side - Form */}
         <motion.div
-          initial={{ x: 20, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          transition={{ delay: 0.2 }}
-          className="bg-white dark:bg-card p-8 md:p-12"
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
         >
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            {/* Name Fields */}
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-semibold text-foreground mb-2">
-                  First name
-                </label>
-                <input
-                  {...register('firstName')}
-                  type="text"
-                  placeholder="First name"
-                  className="w-full px-4 py-3 border border-border/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 bg-white dark:bg-background"
-                />
-                {errors.firstName && <p className="text-red-500 text-sm mt-1">{errors.firstName.message}</p>}
-              </div>
-              <div>
-                <label className="block text-sm font-semibold text-foreground mb-2">
-                  Last name
-                </label>
-                <input
-                  {...register('lastName')}
-                  type="text"
-                  placeholder="Last name"
-                  className="w-full px-4 py-3 border border-border/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 bg-white dark:bg-background"
-                />
-                {errors.lastName && <p className="text-red-500 text-sm mt-1">{errors.lastName.message}</p>}
-              </div>
-            </div>
-
-            {/* Email */}
-            <div>
-              <label className="block text-sm font-semibold text-foreground mb-2">
-                Email address
-              </label>
-              <input
-                {...register('email')}
-                type="email"
-                placeholder="Email address"
-                className="w-full px-4 py-3 border border-border/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 bg-white dark:bg-background"
-              />
-              {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
-            </div>
-
-            {/* Phone */}
-            <div>
-              <label className="block text-sm font-semibold text-foreground mb-2">
-                Phone number
-              </label>
-              <div className="flex gap-2">
-                <select className="px-3 py-3 border border-border/30 rounded-lg bg-white dark:bg-background focus:outline-none focus:ring-2 focus:ring-primary/50">
-                  <option>+254</option>
-                  <option>+1</option>
-                  <option>+44</option>
-                </select>
-                <input
-                  {...register('phone')}
-                  type="tel"
-                  placeholder="Phone number"
-                  className="flex-1 px-4 py-3 border border-border/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 bg-white dark:bg-background"
-                />
-              </div>
-              {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone.message}</p>}
-            </div>
-
-            {/* Amount */}
-            <div>
-              <label className="block text-sm font-semibold text-foreground mb-2">
-                Amount
-              </label>
-              <div className="flex gap-2">
-                <select className="px-3 py-3 border border-border/30 rounded-lg bg-white dark:bg-background focus:outline-none focus:ring-2 focus:ring-primary/50 font-semibold">
-                  <option>KES</option>
-                </select>
-                <input
-                  type="text"
-                  value={amount.toLocaleString()}
-                  disabled
-                  className="flex-1 px-4 py-3 border border-border/30 rounded-lg bg-muted text-foreground/50 font-semibold"
-                />
-              </div>
-              <p className="text-xs text-foreground/60 mt-2">
-                Processing fee included: KSh {processingFee.toLocaleString()}
+          {status === 'success' ? (
+            <div className="bg-white dark:bg-card rounded-3xl p-8 md:p-12 text-center h-full flex flex-col justify-center">
+              <motion.div
+                initial={{ scale: 0, rotate: -180 }}
+                animate={{ scale: 1, rotate: 0 }}
+                transition={{ type: 'spring', delay: 0.2 }}
+                className="mb-6"
+              >
+                <CheckCircle className="w-16 h-16 text-green-500 mx-auto" />
+              </motion.div>
+              <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
+                Payment Initiated!
+              </h2>
+              <p className="text-foreground/70 mb-6">
+                Check your phone for the M-Pesa payment prompt. Enter your PIN to complete the payment.
+              </p>
+              <p className="text-sm text-foreground/60 mb-4">
+                Transaction ID: {transactionId}
+              </p>
+              <p className="text-sm text-foreground/60">
+                Redirecting to confirmation page...
               </p>
             </div>
+          ) : (
+            <div className="bg-white dark:bg-card rounded-3xl p-8 md:p-12">
+              <h2 className="text-2xl font-bold text-foreground mb-8">
+                {status === 'error' ? 'Payment Failed' : 'Complete Payment'}
+              </h2>
 
-            {/* Submit Button */}
-            <motion.button
-              type="submit"
-              disabled={isProcessing}
-              whileHover={!isProcessing ? { scale: 1.02 } : {}}
-              whileTap={!isProcessing ? { scale: 0.98 } : {}}
-              className="w-full bg-green-500 hover:bg-green-600 disabled:bg-green-400 text-white font-bold py-4 px-6 rounded-lg transition text-lg"
-            >
-              {isProcessing ? 'Processing...' : 'Pay now'}
-            </motion.button>
+              {status === 'error' && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-6 flex gap-3"
+                >
+                  <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+                  <p className="text-red-600 dark:text-red-400 text-sm">{errorMessage}</p>
+                </motion.div>
+              )}
 
-            {/* Security Info */}
-            <div className="flex items-center justify-center gap-2 text-xs text-foreground/60">
-              <Lock className="w-4 h-4" />
-              <span>Your payment information is secure and encrypted</span>
+              <form onSubmit={initiateSTKPush} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-foreground/70 mb-2">
+                    First Name
+                  </label>
+                  <input
+                    type="text"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    placeholder="John"
+                    className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-background"
+                    disabled={isProcessing}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-foreground/70 mb-2">
+                    Last Name
+                  </label>
+                  <input
+                    type="text"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    placeholder="Doe"
+                    className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-background"
+                    disabled={isProcessing}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-foreground/70 mb-2">
+                    Email Address
+                  </label>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="john@example.com"
+                    className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-background"
+                    disabled={isProcessing}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-foreground/70 mb-2">
+                    Phone Number (M-Pesa)
+                  </label>
+                  <input
+                    type="tel"
+                    value={phoneNumber}
+                    onChange={(e) => setPhoneNumber(e.target.value)}
+                    placeholder="+254712345678"
+                    className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary bg-background"
+                    disabled={isProcessing}
+                  />
+                  <p className="text-xs text-foreground/60 mt-1">
+                    The phone number linked to your M-Pesa account
+                  </p>
+                </div>
+
+                <div className="bg-primary/10 dark:bg-primary/20 rounded-lg p-4 mt-6">
+                  <p className="text-sm text-foreground/70">
+                    <span className="font-semibold">Amount to Pay:</span>
+                  </p>
+                  <p className="text-2xl font-bold text-primary">
+                    KSh {totalAmount.toLocaleString()}
+                  </p>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isProcessing}
+                  className="w-full bg-primary text-primary-foreground font-bold py-4 px-6 rounded-full hover:bg-primary/90 transition disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 mt-8"
+                >
+                  {isProcessing ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      Processing...
+                    </>
+                  ) : (
+                    'Pay now'
+                  )}
+                </button>
+
+                <p className="text-xs text-center text-foreground/60 mt-4">
+                  Your payment information is secure and encrypted
+                </p>
+              </form>
             </div>
-          </form>
+          )}
         </motion.div>
       </div>
     </motion.div>
