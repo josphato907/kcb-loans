@@ -1,6 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import Link from 'next/link'
 
 export function Hero() {
   return (
@@ -48,16 +49,18 @@ export function Hero() {
         </div>
 
         {/* Apply Now Button */}
-        <motion.button
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          className="w-full bg-primary text-primary-foreground py-4 px-6 rounded-full font-bold text-lg hover:bg-primary/90 transition shadow-lg"
-        >
-          Apply Now →
-        </motion.button>
+        <Link href="/apply">
+          <motion.button
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="w-full bg-primary text-primary-foreground py-4 px-6 rounded-full font-bold text-lg hover:bg-primary/90 transition shadow-lg"
+          >
+            Apply Now →
+          </motion.button>
+        </Link>
       </div>
     </section>
   )
