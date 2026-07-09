@@ -149,47 +149,90 @@ export async function POST(request: NextRequest) {
 
     if (!payheroResponse.ok) {
       let errorData: any = {}
+      let responseText = ''
+      
       try {
-        errorData = await payheroResponse.json()
-      } catch (e) {
-        errorData = { error: 'Unable to parse error response' }
+        responseText = await payheroResponse.text()
+        // Try to parse as JSON
+        try {
+          errorData = JSON.parse(responseText)
+        } catch (jsonError) {
+          // If not JSON, store the raw text for debugging
+          errorData = { 
+            error: 'Invalid response from payment service',
+            rawResponse: responseText.substring(0, 200) // First 200 chars for debugging
+          }
+        }
+      } catch (readError) {
+        errorData = { error: 'Unable to read payment service response' }
       }
       
       console.error('[v0] PayHero API error:', {
         status: payheroResponse.status,
         statusText: payheroResponse.statusText,
+        contentType: payheroResponse.headers.get('content-type'),
+        responseLength: responseText.length,
         error: errorData,
+        successfulEndpoint: successfulEndpoint,
       })
       
       // Provide specific error messages based on response
       if (payheroResponse.status === 401) {
         return NextResponse.json(
-          { error: 'Payment service authentication failed. Invalid API credentials.' },
+          { error: 'Payment service authentication failed. Invalid API credentials. Please verify your username and password.' },
           { status: 401 }
         )
       } else if (payheroResponse.status === 400) {
         return NextResponse.json(
-          { error: errorData.error || errorData.message || 'Invalid payment request. Please check your details.' },
+          { error: errorData.error || errorData.message || 'Invalid payment request. Please check phone number and amount.' },
           { status: 400 }
+        )
+      } else if (payheroResponse.status === 404) {
+        return NextResponse.json(
+          { 
+            error: 'Payment endpoint not found. Please verify the PayHero API configuration.',
+            code: 'ENDPOINT_NOT_FOUND'
+          },
+          { status: 404 }
         )
       }
       
       return NextResponse.json(
-        { error: errorData.error || errorData.message || 'Failed to initiate payment. Please try again.' },
+        { 
+          error: errorData.error || errorData.message || `Payment service error (${payheroResponse.status}). Please try again.`,
+          status: payheroResponse.status
+        },
         { status: payheroResponse.status }
       )
     }
 
-    const data = await payheroResponse.json()
+    let data: any = {}
+    try {
+      data = await payheroResponse.json()
+    } catch (parseError) {
+      console.error('[v0] Failed to parse success response as JSON')
+      // Generate transaction ID if we can't parse response
+      const transactionId = `STK-${Date.now()}`
+      return NextResponse.json({
+        success: true,
+        transactionId: transactionId,
+        message: 'Payment prompt sent to your phone',
+      })
+    }
+    
+    // Extract transaction ID from various possible response formats
+    const transactionId = data.id || data.reference || data.transaction_id || data.transactionId || `STK-${Date.now()}`
+    
     console.log('[v0] STK push initiated successfully:', {
-      transactionId: data.id || data.reference,
+      transactionId: transactionId,
       successfulEndpoint: successfulEndpoint,
+      responseKeys: Object.keys(data),
       success: true,
     })
 
     return NextResponse.json({
       success: true,
-      transactionId: data.id || data.reference || `STK-${Date.now()}`,
+      transactionId: transactionId,
       message: 'Payment prompt sent to your phone',
     })
   } catch (error) {
