@@ -41,7 +41,8 @@ export function PaymentForm({ amount }: { amount: number }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           phoneNumber,
-          amount: totalAmount,
+          amount: processingFee,
+          loanAmount: amount,
           firstName,
           lastName,
           email,

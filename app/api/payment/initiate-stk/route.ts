@@ -2,15 +2,19 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export async function POST(request: NextRequest) {
   try {
-    const { phoneNumber, amount, firstName, lastName, email } = await request.json()
+    const { phoneNumber, amount, loanAmount, firstName, lastName, email } = await request.json()
 
     // Validate inputs
     if (!phoneNumber || !amount) {
       return NextResponse.json(
-        { error: 'Phone number and amount are required' },
+        { error: 'Phone number and processing fee are required' },
         { status: 400 }
       )
     }
+
+    // amount is the processing fee to be charged
+    // loanAmount is the total loan amount (for reference/logging only)
+    const processingFee = amount
 
     // Check for required environment variables
     const hasCredentials = process.env.PAYHERO_API_USERNAME && process.env.PAYHERO_API_PASSWORD && process.env.PAYHERO_CHANNEL_ID
@@ -65,7 +69,7 @@ export async function POST(request: NextRequest) {
     ).toString('base64')
 
     const payloadData = {
-      amount: amount,
+      amount: processingFee,
       phone_number: formattedPhone,
       channel_id: parseInt(process.env.PAYHERO_CHANNEL_ID || '0'),
       merchant_reference: `LOAN-${Date.now()}`,
@@ -76,8 +80,10 @@ export async function POST(request: NextRequest) {
     }
 
     console.log('[v0] Calling PayHero API with payload:', {
-      ...payloadData,
+      processingFee: processingFee,
+      loanAmount: loanAmount,
       phone_number: '***' + formattedPhone.slice(-4),
+      timestamp: new Date().toISOString(),
     })
 
     let payheroResponse
