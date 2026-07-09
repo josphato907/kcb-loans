@@ -34,9 +34,11 @@ export async function POST(request: NextRequest) {
       mockMode: usesMockMode,
     })
 
-    // In mock mode, simulate successful payment initiation
+    // In mock mode, simulate successful payment initiation with realistic delay
     if (usesMockMode) {
-      console.log('[v0] Mock payment initiated - simulating STK push')
+      console.log('[v0] Mock payment initiated - simulating STK push with 2 second delay')
+      // Simulate network delay for STK push
+      await new Promise(resolve => setTimeout(resolve, 2000))
       return NextResponse.json({
         success: true,
         transactionId: `MOCK-${Date.now()}`,

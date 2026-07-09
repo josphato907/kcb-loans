@@ -55,12 +55,17 @@ export function PaymentForm({ amount }: { amount: number }) {
       }
 
       setTransactionId(data.transactionId)
-      setStatus('success')
       
-      // Redirect to success page after 3 seconds
+      // Keep spinner visible for longer while STK push is being sent to phone
+      // Then show success message before redirecting
       setTimeout(() => {
-        router.push('/payment-success')
-      }, 3000)
+        setStatus('success')
+        
+        // Redirect after showing success for 3 seconds
+        setTimeout(() => {
+          router.push('/payment-success')
+        }, 3000)
+      }, 5000) // Show spinner for 5 seconds total to simulate STK push send time
     } catch (error) {
       console.error('[v0] Payment error:', error)
       setErrorMessage(error instanceof Error ? error.message : 'Payment initiation failed')
