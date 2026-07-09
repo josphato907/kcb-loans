@@ -15,8 +15,15 @@ export async function POST(request: NextRequest) {
     // Check for required environment variables
     const usesMockMode = !process.env.PAYHERO_API_KEY
     
+    console.log('[v0] Payment Mode:', {
+      mode: usesMockMode ? 'MOCK (Testing)' : 'PRODUCTION (PayHero Live)',
+      hasApiKey: !!process.env.PAYHERO_API_KEY,
+      baseUrl: process.env.NEXT_PUBLIC_BASE_URL,
+      environment: process.env.NODE_ENV,
+    })
+    
     if (usesMockMode) {
-      console.log('[v0] Running in mock payment mode (testing). Configure PAYHERO_API_KEY for production.')
+      console.warn('[v0] ⚠️ Running in MOCK payment mode. Configure PAYHERO_API_KEY environment variable for real M-Pesa STK push.')
     }
 
     // Format phone number - remove +, ensure starts with 254
