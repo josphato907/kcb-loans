@@ -1,12 +1,13 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
-import { ArrowLeft, CheckCircle } from 'lucide-react'
+import { ArrowLeft } from 'lucide-react'
 
 const loanApplicationSchema = z.object({
   fullName: z.string().min(2, 'Full name is required'),
@@ -23,41 +24,18 @@ const loanApplicationSchema = z.object({
 type LoanApplicationFormData = z.infer<typeof loanApplicationSchema>
 
 export function LoanApplicationForm() {
-  const [submitted, setSubmitted] = useState(false)
-  const { register, handleSubmit, formState: { errors }, reset } = useForm<LoanApplicationFormData>({
+  const router = useRouter()
+  const { register, handleSubmit, formState: { errors } } = useForm<LoanApplicationFormData>({
     resolver: zodResolver(loanApplicationSchema),
   })
 
   const onSubmit = async (data: LoanApplicationFormData) => {
     try {
       console.log('[v0] Form submitted:', data)
-      setSubmitted(true)
-      reset()
-      setTimeout(() => setSubmitted(false), 5000)
+      router.push('/select-amount')
     } catch (error) {
       console.error('[v0] Form submission error:', error)
     }
-  }
-
-  if (submitted) {
-    return (
-      <section className="min-h-screen bg-background flex items-center justify-center px-4 py-16">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="text-center max-w-md"
-        >
-          <CheckCircle className="w-16 h-16 text-primary mx-auto mb-6" />
-          <h2 className="text-3xl font-bold text-foreground mb-4">Application Submitted!</h2>
-          <p className="text-foreground/70 mb-8">
-            Thank you for applying. We&apos;ll review your application and contact you shortly.
-          </p>
-          <Link href="/" className="inline-block bg-primary text-primary-foreground px-6 py-3 rounded-full font-semibold hover:bg-primary/90 transition">
-            Back to Home
-          </Link>
-        </motion.div>
-      </section>
-    )
   }
 
   return (
