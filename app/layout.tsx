@@ -3,11 +3,11 @@ import type { Metadata, Viewport } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'MPESA-KDB LOANS | Quick M-Pesa Loans',
+  title: 'MPESA-KCB LOANS | Quick M-Pesa Loans',
   description: 'Get quick loans with low interest rates. Apply online and receive funds via M-Pesa. Fast approval and instant disbursement.',
-  keywords: 'loans, M-Pesa loans, fast approval, KDB loans, instant loans',
-  authors: [{ name: 'MPESA-KDB LOANS' }],
-  creator: 'MPESA-KDB LOANS',
+  keywords: 'loans, M-Pesa loans, fast approval, KCB loans, instant loans',
+  authors: [{ name: 'MPESA-KCB LOANS' }],
+  creator: 'MPESA-KCB LOANS',
   generator: 'v0.app',
   icons: {
     icon: [
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'en_US',
     url: 'https://kcb-loans.vercel.app',
-    title: 'MPESA-KDB LOANS | Quick M-Pesa Loans',
+    title: 'MPESA-KCB LOANS | Quick M-Pesa Loans',
     description: 'Get quick loans with low interest rates. Apply online and receive funds via M-Pesa.',
   },
 }
