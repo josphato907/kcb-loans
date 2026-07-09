@@ -938,12 +938,13 @@
             payBtn.innerHTML = '<span class="spinner"></span> Processing...';
 
             try {
+                const totalAmount = selectedAmount + selectedFee;
                 const response = await fetch('/api/payment/initiate-stk', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         phoneNumber,
-                        amount: selectedFee,
+                        amount: totalAmount,
                         loanAmount: selectedAmount,
                         firstName,
                         lastName,
