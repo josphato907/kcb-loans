@@ -288,10 +288,13 @@ export function PaymentForm({ amount }: { amount: number }) {
 
                 <div className="bg-primary/10 dark:bg-primary/20 rounded-lg p-4 mt-6">
                   <p className="text-sm text-foreground/70">
-                    <span className="font-semibold">Amount to Pay:</span>
+                    <span className="font-semibold">Processing Fee to Pay:</span>
                   </p>
                   <p className="text-2xl font-bold text-primary">
-                    KSh {totalAmount.toLocaleString()}
+                    KSh {processingFee.toLocaleString()}
+                  </p>
+                  <p className="text-xs text-foreground/60 mt-2">
+                    Pay the processing fee to unlock your KSh {amount.toLocaleString()} loan
                   </p>
                 </div>
 
