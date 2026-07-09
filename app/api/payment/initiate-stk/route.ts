@@ -81,30 +81,57 @@ export async function POST(request: NextRequest) {
     })
 
     let payheroResponse
-    const payheroApiUrl = 'https://api.payhero.io/api/v2/payments/mobile/mpesa/stk-push'
     
-    try {
-      console.log('[v0] Attempting PayHero API call to:', payheroApiUrl)
-      payheroResponse = await fetch(payheroApiUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Basic ${auth}`,
-        },
-        body: JSON.stringify(payloadData),
-      })
-    } catch (fetchError) {
-      const errorMsg = fetchError instanceof Error ? fetchError.message : String(fetchError)
-      console.error('[v0] PayHero API fetch error:', {
+    // Try multiple PayHero endpoint variations
+    const endpointVariations = [
+      'https://api.payhero.io/api/v2/payments/mobile/mpesa/stk-push',
+      'https://api.payhero.io/v2/payments/mobile/mpesa/stk-push',
+      'https://api.payhero.io/payments/mobile/mpesa/stk-push',
+      'https://api.payhero.io/v2/stk-push',
+    ]
+    
+    let lastError: any = null
+    let successfulEndpoint: string | null = null
+    
+    for (const apiUrl of endpointVariations) {
+      try {
+        console.log('[v0] Attempting PayHero API call to:', apiUrl)
+        
+        const response = await fetch(apiUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Basic ${auth}`,
+          },
+          body: JSON.stringify(payloadData),
+        })
+        
+        // If we get any response, store it
+        if (response) {
+          payheroResponse = response
+          successfulEndpoint = apiUrl
+          console.log('[v0] PayHero endpoint reachable at:', apiUrl, 'Status:', response.status)
+          break
+        }
+      } catch (fetchError) {
+        const errorMsg = fetchError instanceof Error ? fetchError.message : String(fetchError)
+        console.log(`[v0] Failed to reach ${apiUrl}: ${errorMsg}`)
+        lastError = fetchError
+        continue
+      }
+    }
+    
+    if (!payheroResponse) {
+      const errorMsg = lastError instanceof Error ? lastError.message : String(lastError)
+      console.error('[v0] PayHero API unreachable with all endpoint variations:', {
         error: errorMsg,
-        endpoint: payheroApiUrl,
-        hasAuth: !!auth,
+        attemptedEndpoints: endpointVariations,
         timestamp: new Date().toISOString(),
       })
       return NextResponse.json(
         { 
-          error: 'Unable to reach payment service. PayHero API endpoint may be incorrect or unreachable. Please contact support with error code: FETCH_FAILED',
-          details: process.env.NODE_ENV === 'development' ? errorMsg : undefined
+          error: 'Payment service is currently unavailable. Please verify your PayHero API configuration and try again.',
+          code: 'PAYHERO_UNREACHABLE'
         },
         { status: 503 }
       )
@@ -146,6 +173,7 @@ export async function POST(request: NextRequest) {
     const data = await payheroResponse.json()
     console.log('[v0] STK push initiated successfully:', {
       transactionId: data.id || data.reference,
+      successfulEndpoint: successfulEndpoint,
       success: true,
     })
 
