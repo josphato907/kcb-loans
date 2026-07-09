@@ -9,9 +9,9 @@ export function ContactFooter() {
         <div className="grid md:grid-cols-3 gap-12 mb-12">
           {/* About */}
           <div>
-            <h3 className="font-bold text-lg mb-4">About KCB M-PESA Loans</h3>
+            <h3 className="font-bold text-lg mb-4">About MPESA-KDB LOANS</h3>
             <p className="opacity-90">
-              Quick and easy loan approvals for M-PESA users. Get funds when you need them with transparent terms and no hidden charges.
+              Quick and easy loan approvals for M-PESA users. Get funds when you need them with transparent terms and competitive rates.
             </p>
           </div>
 
@@ -55,7 +55,7 @@ export function ContactFooter() {
           transition={{ duration: 0.6 }}
           className="border-t border-primary-foreground/20 pt-8 text-center text-sm opacity-90"
         >
-          <p>&copy; 2026 KCB M-PESA Loans Kenya. Licensed by CBK.</p>
+          <p>&copy; 2026 MPESA-KDB LOANS Kenya. Licensed by CBK.</p>
         </motion.div>
       </div>
     </footer>

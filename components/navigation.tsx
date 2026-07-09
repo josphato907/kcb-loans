@@ -13,9 +13,9 @@ export function Navigation() {
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 font-bold text-xl text-primary">
           <div className="w-7 h-7 bg-primary rounded flex items-center justify-center text-white text-xs font-bold">
-            KCB
+            MK
           </div>
-          <span className="text-sm md:text-base">M-PESA Loans</span>
+          <span className="text-sm md:text-base">MPESA-KDB LOANS</span>
         </Link>
 
         {/* Right Actions */}

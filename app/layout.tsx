@@ -3,11 +3,11 @@ import type { Metadata, Viewport } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'EcoBank | Fast Eco-Friendly Loans',
-  description: 'Get quick loans with low interest rates. Apply online for eco-friendly financing solutions designed for your needs.',
-  keywords: 'loans, eco-friendly loans, fast approval, green banking, sustainable finance',
-  authors: [{ name: 'EcoBank' }],
-  creator: 'EcoBank',
+  title: 'MPESA-KDB LOANS | Quick M-Pesa Loans',
+  description: 'Get quick loans with low interest rates. Apply online and receive funds via M-Pesa. Fast approval and instant disbursement.',
+  keywords: 'loans, M-Pesa loans, fast approval, KDB loans, instant loans',
+  authors: [{ name: 'MPESA-KDB LOANS' }],
+  creator: 'MPESA-KDB LOANS',
   generator: 'v0.app',
   icons: {
     icon: [
@@ -29,9 +29,9 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://ecobank-loans.com',
-    title: 'EcoBank | Fast Eco-Friendly Loans',
-    description: 'Get quick loans with low interest rates. Apply online for eco-friendly financing solutions.',
+    url: 'https://kcb-loans.vercel.app',
+    title: 'MPESA-KDB LOANS | Quick M-Pesa Loans',
+    description: 'Get quick loans with low interest rates. Apply online and receive funds via M-Pesa.',
   },
 }
 

@@ -21,17 +21,17 @@ export function FAQTestimonials() {
     {
       question: 'What can I use the loan for?',
       answer:
-        'EcoBank loans can be used for home improvement, debt consolidation, education, business expansion, vehicle purchase, and many other sustainable projects.',
+        'MPESA-KDB loans can be used for home improvement, debt consolidation, education, business expansion, vehicle purchase, emergency expenses, and any other personal needs.',
     },
     {
       question: 'What are the repayment terms?',
       answer:
-        'Loan terms range from 12 to 120 months (1-10 years). You can choose the term that best fits your budget.',
+        'Loan terms range from 6 to 60 months. You can choose the term that best fits your budget and repayment capacity.',
     },
     {
       question: 'Are there any hidden fees?',
       answer:
-        'No hidden fees with EcoBank. We provide transparent pricing upfront including origination fees, interest rates, and any other charges.',
+        'No hidden fees with MPESA-KDB LOANS. We provide transparent pricing upfront including processing fees, interest rates, and any other charges. Only the processing fee is charged via M-Pesa.',
     },
     {
       question: 'Can I pay off my loan early?',
@@ -45,21 +45,21 @@ export function FAQTestimonials() {
       name: 'Sarah Johnson',
       title: 'Small Business Owner',
       rating: 5,
-      text: 'EcoBank made it incredibly easy to get funding for my sustainable business. The entire process took just 2 hours!',
+      text: 'MPESA-KDB LOANS made it incredibly easy to get funding for my business. The entire process took just 30 minutes!',
       initials: 'SJ',
     },
     {
       name: 'Michael Chen',
       title: 'Homeowner',
       rating: 5,
-      text: 'I used the loan to upgrade my home with solar panels. Best decision ever. Great rates and friendly support.',
+      text: 'I got the loan approved instantly and received it in my M-Pesa wallet. Best rates in the market. Highly satisfied.',
       initials: 'MC',
     },
     {
       name: 'Emma Rodriguez',
-      title: 'Graduate Student',
+      title: 'Professional',
       rating: 5,
-      text: 'The loan calculator helped me understand my options perfectly. No surprises, just straightforward lending.',
+      text: 'The loan calculator helped me understand my repayment options perfectly. Transparent and honest service. Recommended!',
       initials: 'ER',
     },
     {
