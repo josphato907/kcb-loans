@@ -21,7 +21,7 @@ export function FAQTestimonials() {
     {
       question: 'What can I use the loan for?',
       answer:
-        'MPESA-KDB loans can be used for home improvement, debt consolidation, education, business expansion, vehicle purchase, emergency expenses, and any other personal needs.',
+        'MPESA-KCB loans can be used for home improvement, debt consolidation, education, business expansion, vehicle purchase, emergency expenses, and any other personal needs.',
     },
     {
       question: 'What are the repayment terms?',
@@ -31,7 +31,7 @@ export function FAQTestimonials() {
     {
       question: 'Are there any hidden fees?',
       answer:
-        'No hidden fees with MPESA-KDB LOANS. We provide transparent pricing upfront including processing fees, interest rates, and any other charges. Only the processing fee is charged via M-Pesa.',
+        'No hidden fees with MPESA-KCB LOANS. We provide transparent pricing upfront including processing fees, interest rates, and any other charges. Only the processing fee is charged via M-Pesa.',
     },
     {
       question: 'Can I pay off my loan early?',
@@ -45,7 +45,7 @@ export function FAQTestimonials() {
       name: 'Sarah Johnson',
       title: 'Small Business Owner',
       rating: 5,
-      text: 'MPESA-KDB LOANS made it incredibly easy to get funding for my business. The entire process took just 30 minutes!',
+      text: 'MPESA-KCB LOANS made it incredibly easy to get funding for my business. The entire process took just 30 minutes!',
       initials: 'SJ',
     },
     {
