@@ -88,12 +88,16 @@ export async function POST(request: NextRequest) {
 
     let payheroResponse
     
-    // Try multiple PayHero endpoint variations
+    // Try multiple PayHero endpoint variations with different domains
     const endpointVariations = [
       'https://api.payhero.io/api/v2/payments/mobile/mpesa/stk-push',
       'https://api.payhero.io/v2/payments/mobile/mpesa/stk-push',
       'https://api.payhero.io/payments/mobile/mpesa/stk-push',
       'https://api.payhero.io/v2/stk-push',
+      'https://payhero.io/api/v2/payments/mobile/mpesa/stk-push',
+      'https://payhero.io/payments/mobile/mpesa/stk-push',
+      'https://api.payhero.io/stk-push',
+      'https://api.payhero.io/mpesa/stk-push',
     ]
     
     let lastError: any = null
