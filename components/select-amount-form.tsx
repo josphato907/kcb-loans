@@ -22,56 +22,12 @@ const LOAN_AMOUNTS = [
 export function SelectAmountForm() {
   const router = useRouter()
   const [selectedAmount, setSelectedAmount] = useState<number | null>(null)
-  const [submitted, setSubmitted] = useState(false)
 
   const handleSelect = (amount: number) => {
     setSelectedAmount(amount)
     setTimeout(() => {
-      setSubmitted(true)
-      setTimeout(() => {
-        router.push('/')
-      }, 2000)
+      router.push(`/payment?amount=${amount}`)
     }, 300)
-  }
-
-  if (submitted) {
-    return (
-      <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.4 }}
-        className="w-full text-center"
-      >
-        <div className="bg-white dark:bg-card rounded-3xl p-8 md:p-12">
-          <motion.div
-            initial={{ scale: 0, rotate: -180 }}
-            animate={{ scale: 1, rotate: 0 }}
-            transition={{ type: 'spring', delay: 0.2, stiffness: 100 }}
-            className="w-16 h-16 bg-yellow-100 dark:bg-yellow-900/30 rounded-full flex items-center justify-center mx-auto mb-6"
-          >
-            <Sparkles className="w-8 h-8 text-yellow-500" />
-          </motion.div>
-
-          <motion.h2
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="text-3xl md:text-4xl font-bold text-primary mb-4"
-          >
-            You&apos;re approved!
-          </motion.h2>
-
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.4 }}
-            className="text-foreground/70 mb-8 text-lg"
-          >
-            Redirecting you back home...
-          </motion.p>
-        </div>
-      </motion.div>
-    )
   }
 
   return (
@@ -125,7 +81,7 @@ export function SelectAmountForm() {
             >
               <h3 className="text-2xl font-bold text-primary mb-2">{amount.label}</h3>
               <p className="text-foreground/70 text-sm">
-                Repay over {amount.repay},processing fee is {amount.fee}
+                Repay over {amount.repay}, processing fee is {amount.fee}
               </p>
               <motion.button
                 onClick={(e) => {
