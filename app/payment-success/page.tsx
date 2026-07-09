@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { Navigation } from '@/components/navigation'
-import { CheckCircle } from 'lucide-react'
+import { Clock } from 'lucide-react'
 
 export default function PaymentSuccessPage() {
   const router = useRouter()
@@ -13,7 +13,7 @@ export default function PaymentSuccessPage() {
   useEffect(() => {
     const timer = setTimeout(() => {
       router.push('/')
-    }, 5000)
+    }, 8000)
 
     return () => clearTimeout(timer)
   }, [router])
@@ -21,7 +21,7 @@ export default function PaymentSuccessPage() {
   return (
     <>
       <Navigation />
-      <main className="min-h-screen bg-gradient-to-br from-green-50 to-green-100 dark:from-background dark:to-background flex items-center justify-center px-4 py-8">
+      <main className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 dark:from-background dark:to-background flex items-center justify-center px-4 py-8">
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -30,12 +30,17 @@ export default function PaymentSuccessPage() {
         >
           <div className="bg-white dark:bg-card rounded-3xl p-8 md:p-12 shadow-xl">
             <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
+              initial={{ scale: 0, rotate: -180 }}
+              animate={{ scale: 1, rotate: 0 }}
               transition={{ delay: 0.2, type: 'spring' }}
               className="flex justify-center mb-6"
             >
-              <CheckCircle className="w-20 h-20 text-green-500" />
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
+              >
+                <Clock className="w-20 h-20 text-blue-500" />
+              </motion.div>
             </motion.div>
 
             <motion.h1
@@ -44,7 +49,7 @@ export default function PaymentSuccessPage() {
               transition={{ delay: 0.3 }}
               className="text-3xl font-bold text-foreground mb-3"
             >
-              Payment Successful!
+              Payment Pending Approval
             </motion.h1>
 
             <motion.p
@@ -53,20 +58,21 @@ export default function PaymentSuccessPage() {
               transition={{ delay: 0.4 }}
               className="text-foreground/70 mb-6 text-lg"
             >
-              Your loan application has been confirmed. You will receive the funds in your account within 24 hours.
+              Your payment has been submitted and is awaiting approval. We will process your loan application and notify you shortly.
             </motion.p>
 
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5 }}
-              className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-900/50 rounded-lg p-4 mb-8"
+              className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-900/50 rounded-lg p-4 mb-8"
             >
               <p className="text-sm text-foreground/70">
                 <span className="font-semibold text-foreground">Reference ID:</span> LN-{Math.random().toString(36).substr(2, 9).toUpperCase()}
               </p>
-              <p className="text-xs text-foreground/60 mt-2">
-                Check your email for confirmation and next steps
+              <p className="text-xs text-foreground/60 mt-3">
+                <span className="font-semibold block mb-1">What happens next:</span>
+                We will review your payment and notify you via SMS and email within 24 hours
               </p>
             </motion.div>
 
@@ -82,7 +88,7 @@ export default function PaymentSuccessPage() {
                 </button>
               </Link>
               <p className="text-xs text-foreground/60">
-                Redirecting in 5 seconds...
+                Redirecting in 8 seconds...
               </p>
             </motion.div>
           </div>
