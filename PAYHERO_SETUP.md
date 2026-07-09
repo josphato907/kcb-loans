@@ -11,10 +11,11 @@ This guide explains how to configure PayHero API credentials for M-Pesa STK push
 ## Step 1: Get PayHero API Credentials
 
 1. Log in to your PayHero merchant dashboard
-2. Navigate to **Settings** → **API Keys** or **Developer Settings**
+2. Navigate to **Settings** → **API Credentials** or **Integrations**
 3. Copy your:
-   - **API Key** (also called Bearer Token or Access Token)
-   - **Secret Key** (for webhook verification)
+   - **API Username** (merchant username for authentication)
+   - **API Password** (merchant password for authentication)
+   - **Channel ID** (your PayHero channel/merchant ID for STK push)
 
 ## Step 2: Configure Environment Variables on Vercel
 
@@ -26,18 +27,23 @@ This guide explains how to configure PayHero API credentials for M-Pesa STK push
 
 ### Required Variables:
 
-**PAYHERO_API_KEY**
-- Value: Your PayHero API Key
+**PAYHERO_API_USERNAME**
+- Value: Your PayHero API Username
 - Type: Sensitive
 - Environment: Production, Preview, Development
 
-**PAYHERO_SECRET_KEY**
-- Value: Your PayHero Secret Key
+**PAYHERO_API_PASSWORD**
+- Value: Your PayHero API Password
 - Type: Sensitive
+- Environment: Production, Preview, Development
+
+**PAYHERO_CHANNEL_ID**
+- Value: Your PayHero Channel ID (e.g., 6086)
+- Type: Plain (numbers only)
 - Environment: Production, Preview, Development
 
 **NEXT_PUBLIC_BASE_URL**
-- Value: Your Vercel deployment URL (e.g., https://kcb-loans-m4fy.vercel.app)
+- Value: Your Vercel deployment URL (e.g., https://kcb-loans.vercel.app)
 - Type: Plain
 - Environment: Production
 

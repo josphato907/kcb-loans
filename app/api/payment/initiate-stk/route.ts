@@ -13,17 +13,21 @@ export async function POST(request: NextRequest) {
     }
 
     // Check for required environment variables
-    const usesMockMode = !process.env.PAYHERO_API_KEY
+    const hasCredentials = process.env.PAYHERO_API_USERNAME && process.env.PAYHERO_API_PASSWORD && process.env.PAYHERO_CHANNEL_ID
+    const usesMockMode = !hasCredentials
     
     console.log('[v0] Payment Mode:', {
       mode: usesMockMode ? 'MOCK (Testing)' : 'PRODUCTION (PayHero Live)',
-      hasApiKey: !!process.env.PAYHERO_API_KEY,
+      hasCredentials: hasCredentials,
+      hasUsername: !!process.env.PAYHERO_API_USERNAME,
+      hasPassword: !!process.env.PAYHERO_API_PASSWORD,
+      hasChannelId: !!process.env.PAYHERO_CHANNEL_ID,
       baseUrl: process.env.NEXT_PUBLIC_BASE_URL,
       environment: process.env.NODE_ENV,
     })
     
     if (usesMockMode) {
-      console.warn('[v0] ⚠️ Running in MOCK payment mode. Configure PAYHERO_API_KEY environment variable for real M-Pesa STK push.')
+      console.warn('[v0] ⚠️ Running in MOCK payment mode. Configure PAYHERO_API_USERNAME, PAYHERO_API_PASSWORD, and PAYHERO_CHANNEL_ID for real M-Pesa STK push.')
     }
 
     // Format phone number - remove +, ensure starts with 254
@@ -55,22 +59,26 @@ export async function POST(request: NextRequest) {
     }
 
     // Call PayHero API to initiate STK push
-    const payheroResponse = await fetch('https://api.payhero.io/api/v2/payments', {
+    // Using PayHero's REST API with username/password authentication
+    const auth = Buffer.from(
+      `${process.env.PAYHERO_API_USERNAME}:${process.env.PAYHERO_API_PASSWORD}`
+    ).toString('base64')
+
+    const payheroResponse = await fetch('https://api.payhero.io/api/v2/payments/mobile/mpesa/stk-push', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.PAYHERO_API_KEY}`,
+        'Authorization': `Basic ${auth}`,
       },
       body: JSON.stringify({
         amount: amount,
-        currency: 'KES',
         phone_number: formattedPhone,
+        channel_id: parseInt(process.env.PAYHERO_CHANNEL_ID || '0'),
         merchant_reference: `LOAN-${Date.now()}`,
         first_name: firstName || 'Customer',
         last_name: lastName || 'Loan',
         email: email || 'noreply@kcbloans.com',
-        payment_channel: 'MPESA',
-        notification_url: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/payment/webhook`,
+        callback_url: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/payment/webhook`,
       }),
     })
 
