@@ -81,8 +81,11 @@ export async function POST(request: NextRequest) {
     })
 
     let payheroResponse
+    const payheroApiUrl = 'https://api.payhero.io/api/v2/payments/mobile/mpesa/stk-push'
+    
     try {
-      payheroResponse = await fetch('https://api.payhero.io/api/v2/payments/mobile/mpesa/stk-push', {
+      console.log('[v0] Attempting PayHero API call to:', payheroApiUrl)
+      payheroResponse = await fetch(payheroApiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -91,9 +94,18 @@ export async function POST(request: NextRequest) {
         body: JSON.stringify(payloadData),
       })
     } catch (fetchError) {
-      console.error('[v0] PayHero API fetch error:', fetchError instanceof Error ? fetchError.message : String(fetchError))
+      const errorMsg = fetchError instanceof Error ? fetchError.message : String(fetchError)
+      console.error('[v0] PayHero API fetch error:', {
+        error: errorMsg,
+        endpoint: payheroApiUrl,
+        hasAuth: !!auth,
+        timestamp: new Date().toISOString(),
+      })
       return NextResponse.json(
-        { error: 'Unable to reach payment service. Please check your internet connection and try again.' },
+        { 
+          error: 'Unable to reach payment service. PayHero API endpoint may be incorrect or unreachable. Please contact support with error code: FETCH_FAILED',
+          details: process.env.NODE_ENV === 'development' ? errorMsg : undefined
+        },
         { status: 503 }
       )
     }
