@@ -438,6 +438,29 @@
             cursor: not-allowed;
         }
         
+        .amount-btn {
+            padding: 12px 16px;
+            border: 2px solid var(--border);
+            background-color: transparent;
+            color: var(--foreground);
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .amount-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        
+        .amount-btn:active {
+            background-color: var(--primary);
+            color: var(--primary-foreground);
+            border-color: var(--primary);
+        }
+        
         .security-text {
             text-align: center;
             font-size: 12px;
@@ -720,6 +743,18 @@
                         <div style="font-size: 12px; color: rgba(0,0,0,0.6); margin-top: 32px;">
                             <p>Secured by PayHero</p>
                         </div>
+
+                        <!-- Loan Amount Selector -->
+                        <div style="margin-top: 40px; padding-top: 32px; border-top: 1px solid var(--border);">
+                            <h3 style="margin-bottom: 16px; font-size: 14px; font-weight: 600;">Choose Loan Amount</h3>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                                <button type="button" class="amount-btn" onclick="updateLoanAmount(20000)" data-amount="20000">KSh 20,000</button>
+                                <button type="button" class="amount-btn" onclick="updateLoanAmount(30000)" data-amount="30000">KSh 30,000</button>
+                                <button type="button" class="amount-btn" onclick="updateLoanAmount(50000)" data-amount="50000" style="grid-column: 1; background-color: var(--primary); color: var(--primary-foreground);">KSh 50,000</button>
+                                <button type="button" class="amount-btn" onclick="updateLoanAmount(75000)" data-amount="75000">KSh 75,000</button>
+                                <button type="button" class="amount-btn" onclick="updateLoanAmount(100000)" data-amount="100000">KSh 100,000</button>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="payment-form">
@@ -820,6 +855,7 @@
             const params = new URLSearchParams(window.location.search);
             const amount = parseInt(params.get('amount')) || 50000;
             setLoanAmount(amount);
+            updateLoanAmount(amount); // Highlight the selected button
         }
 
         // Set loan amount and update displays
@@ -836,6 +872,25 @@
 
             window.loanAmount = amount;
             window.processingFee = fee;
+        }
+
+        // Update loan amount from button click
+        function updateLoanAmount(amount) {
+            console.log('[v0] Updating loan amount to:', amount);
+            setLoanAmount(amount);
+            
+            // Update the selected button styling
+            document.querySelectorAll('.amount-btn').forEach(btn => {
+                if (parseInt(btn.dataset.amount) === amount) {
+                    btn.style.backgroundColor = 'var(--primary)';
+                    btn.style.color = 'var(--primary-foreground)';
+                    btn.style.borderColor = 'var(--primary)';
+                } else {
+                    btn.style.backgroundColor = 'transparent';
+                    btn.style.color = 'var(--foreground)';
+                    btn.style.borderColor = 'var(--border)';
+                }
+            });
         }
 
         // Show/hide sections
