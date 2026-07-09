@@ -74,8 +74,30 @@ export function PaymentForm({ amount }: { amount: number }) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
-      className="w-full max-w-6xl mx-auto"
+      className="w-full max-w-6xl mx-auto relative"
     >
+      {/* Spinning Loader Overlay */}
+      {status === 'processing' && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-black/50 dark:bg-black/70 flex items-center justify-center z-50 rounded-3xl"
+        >
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
+            className="flex flex-col items-center gap-4"
+          >
+            <div className="w-16 h-16 border-4 border-white/30 border-t-white rounded-full" />
+            <div className="text-center">
+              <p className="text-white font-semibold text-lg mb-2">Initiating Payment</p>
+              <p className="text-white/70 text-sm">Check your phone for M-Pesa prompt...</p>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
         {/* Left Side - Amount Info */}
         <motion.div
