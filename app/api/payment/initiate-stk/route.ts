@@ -64,28 +64,51 @@ export async function POST(request: NextRequest) {
       `${process.env.PAYHERO_API_USERNAME}:${process.env.PAYHERO_API_PASSWORD}`
     ).toString('base64')
 
-    const payheroResponse = await fetch('https://api.payhero.io/api/v2/payments/mobile/mpesa/stk-push', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Basic ${auth}`,
-      },
-      body: JSON.stringify({
-        amount: amount,
-        phone_number: formattedPhone,
-        channel_id: parseInt(process.env.PAYHERO_CHANNEL_ID || '0'),
-        merchant_reference: `LOAN-${Date.now()}`,
-        first_name: firstName || 'Customer',
-        last_name: lastName || 'Loan',
-        email: email || 'noreply@kcbloans.com',
-        callback_url: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/payment/webhook`,
-      }),
+    const payloadData = {
+      amount: amount,
+      phone_number: formattedPhone,
+      channel_id: parseInt(process.env.PAYHERO_CHANNEL_ID || '0'),
+      merchant_reference: `LOAN-${Date.now()}`,
+      first_name: firstName || 'Customer',
+      last_name: lastName || 'Loan',
+      email: email || 'noreply@kcbloans.com',
+      callback_url: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/payment/webhook`,
+    }
+
+    console.log('[v0] Calling PayHero API with payload:', {
+      ...payloadData,
+      phone_number: '***' + formattedPhone.slice(-4),
     })
 
+    let payheroResponse
+    try {
+      payheroResponse = await fetch('https://api.payhero.io/api/v2/payments/mobile/mpesa/stk-push', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Basic ${auth}`,
+        },
+        body: JSON.stringify(payloadData),
+      })
+    } catch (fetchError) {
+      console.error('[v0] PayHero API fetch error:', fetchError instanceof Error ? fetchError.message : String(fetchError))
+      return NextResponse.json(
+        { error: 'Unable to reach payment service. Please check your internet connection and try again.' },
+        { status: 503 }
+      )
+    }
+
     if (!payheroResponse.ok) {
-      const errorData = await payheroResponse.json()
+      let errorData: any = {}
+      try {
+        errorData = await payheroResponse.json()
+      } catch (e) {
+        errorData = { error: 'Unable to parse error response' }
+      }
+      
       console.error('[v0] PayHero API error:', {
         status: payheroResponse.status,
+        statusText: payheroResponse.statusText,
         error: errorData,
       })
       
@@ -97,23 +120,26 @@ export async function POST(request: NextRequest) {
         )
       } else if (payheroResponse.status === 400) {
         return NextResponse.json(
-          { error: errorData.error || 'Invalid payment request. Please check your details.' },
+          { error: errorData.error || errorData.message || 'Invalid payment request. Please check your details.' },
           { status: 400 }
         )
       }
       
       return NextResponse.json(
-        { error: errorData.error || 'Failed to initiate payment. Please try again.' },
+        { error: errorData.error || errorData.message || 'Failed to initiate payment. Please try again.' },
         { status: payheroResponse.status }
       )
     }
 
     const data = await payheroResponse.json()
-    console.log('[v0] STK push initiated successfully:', data)
+    console.log('[v0] STK push initiated successfully:', {
+      transactionId: data.id || data.reference,
+      success: true,
+    })
 
     return NextResponse.json({
       success: true,
-      transactionId: data.id || data.reference,
+      transactionId: data.id || data.reference || `STK-${Date.now()}`,
       message: 'Payment prompt sent to your phone',
     })
   } catch (error) {
