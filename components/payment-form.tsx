@@ -176,10 +176,25 @@ export function PaymentForm({ amount }: { amount: number }) {
                 <motion.div
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-6 flex gap-3"
+                  className="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-6"
                 >
-                  <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
-                  <p className="text-red-600 dark:text-red-400 text-sm">{errorMessage}</p>
+                  <div className="flex gap-3 mb-3">
+                    <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-red-600 dark:text-red-400 text-sm font-medium">Payment Error</p>
+                      <p className="text-red-600 dark:text-red-400 text-sm mt-1">{errorMessage}</p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setStatus('idle')
+                      setErrorMessage('')
+                    }}
+                    className="text-xs text-red-600 dark:text-red-400 font-semibold hover:underline"
+                  >
+                    Try again
+                  </button>
                 </motion.div>
               )}
 

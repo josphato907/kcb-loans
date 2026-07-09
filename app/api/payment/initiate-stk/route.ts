@@ -12,12 +12,37 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Check for required environment variables
+    const usesMockMode = !process.env.PAYHERO_API_KEY
+    
+    if (usesMockMode) {
+      console.log('[v0] Running in mock payment mode (testing). Configure PAYHERO_API_KEY for production.')
+    }
+
     // Format phone number - remove +, ensure starts with 254
     let formattedPhone = phoneNumber.replace(/\D/g, '')
     if (formattedPhone.startsWith('0')) {
       formattedPhone = '254' + formattedPhone.substring(1)
     } else if (!formattedPhone.startsWith('254')) {
       formattedPhone = '254' + formattedPhone
+    }
+
+    console.log('[v0] Initiating STK push with:', {
+      phoneNumber: formattedPhone,
+      amount: amount,
+      firstName: firstName || 'Customer',
+      mockMode: usesMockMode,
+    })
+
+    // In mock mode, simulate successful payment initiation
+    if (usesMockMode) {
+      console.log('[v0] Mock payment initiated - simulating STK push')
+      return NextResponse.json({
+        success: true,
+        transactionId: `MOCK-${Date.now()}`,
+        message: 'Mock payment prompt sent to your phone',
+        isMock: true,
+      })
     }
 
     // Call PayHero API to initiate STK push
@@ -42,25 +67,42 @@ export async function POST(request: NextRequest) {
 
     if (!payheroResponse.ok) {
       const errorData = await payheroResponse.json()
-      console.error('[v0] PayHero API error:', errorData)
+      console.error('[v0] PayHero API error:', {
+        status: payheroResponse.status,
+        error: errorData,
+      })
+      
+      // Provide specific error messages based on response
+      if (payheroResponse.status === 401) {
+        return NextResponse.json(
+          { error: 'Payment service authentication failed. Invalid API credentials.' },
+          { status: 401 }
+        )
+      } else if (payheroResponse.status === 400) {
+        return NextResponse.json(
+          { error: errorData.error || 'Invalid payment request. Please check your details.' },
+          { status: 400 }
+        )
+      }
+      
       return NextResponse.json(
-        { error: 'Failed to initiate payment' },
+        { error: errorData.error || 'Failed to initiate payment. Please try again.' },
         { status: payheroResponse.status }
       )
     }
 
     const data = await payheroResponse.json()
-    console.log('[v0] STK push initiated:', data)
+    console.log('[v0] STK push initiated successfully:', data)
 
     return NextResponse.json({
       success: true,
-      transactionId: data.id,
+      transactionId: data.id || data.reference,
       message: 'Payment prompt sent to your phone',
     })
   } catch (error) {
     console.error('[v0] Payment initiation error:', error)
     return NextResponse.json(
-      { error: 'Failed to process payment request' },
+      { error: error instanceof Error ? error.message : 'Failed to process payment request' },
       { status: 500 }
     )
   }
