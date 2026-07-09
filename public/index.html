@@ -854,49 +854,70 @@
         // Handle payment
         async function handlePayment(e) {
             e.preventDefault();
+            console.log('[v0] Payment form submitted');
 
-            const firstName = document.getElementById('firstName').value;
-            const lastName = document.getElementById('lastName').value;
-            const email = document.getElementById('email').value;
-            const phoneNumber = document.getElementById('phoneNumber').value;
+            const firstName = document.getElementById('firstName').value.trim();
+            const lastName = document.getElementById('lastName').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const phoneNumber = document.getElementById('phoneNumber').value.trim();
 
             if (!firstName || !lastName || !email || !phoneNumber) {
                 showError('Please fill in all fields');
                 return;
             }
 
+            // Get current amount from URL or use default
+            const urlParams = new URLSearchParams(window.location.search);
+            const amount = parseInt(urlParams.get('amount')) || 50000;
+            const processingFee = Math.round(amount * 0.005); // 0.5% fee
+            
+            console.log('[v0] Payment details:', {
+                loanAmount: amount,
+                processingFee: processingFee,
+                phoneNumber: '***' + phoneNumber.slice(-4)
+            });
+
             const payBtn = document.getElementById('payBtn');
             payBtn.disabled = true;
             payBtn.innerHTML = '<span class="spinner"></span> Processing...';
 
             try {
+                console.log('[v0] Calling PayHero API...');
+                
                 // Call actual API if available
                 const response = await fetch('/api/payment/initiate-stk', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         phoneNumber,
-                        amount: window.processingFee,
-                        loanAmount: window.loanAmount,
+                        amount: processingFee,
+                        loanAmount: amount,
                         firstName,
                         lastName,
                         email,
                     }),
                 });
 
+                console.log('[v0] API response status:', response.status);
+
                 const data = await response.json();
+                console.log('[v0] API response data:', data);
 
                 if (!response.ok) {
-                    throw new Error(data.error || 'Payment failed');
+                    throw new Error(data.error || `Payment failed with status ${response.status}`);
                 }
 
+                console.log('[v0] Payment initiated successfully');
+                
                 // Show success after delay to simulate STK push
                 setTimeout(() => {
-                    document.getElementById('refId').textContent = `LN-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
+                    document.getElementById('refId').textContent = data.transactionId || `LN-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
                     showSection('success');
+                    console.log('[v0] Showing success page');
 
                     setTimeout(() => {
                         showSection('home');
+                        console.log('[v0] Redirecting to home');
                     }, 8000);
                 }, 5000);
 
